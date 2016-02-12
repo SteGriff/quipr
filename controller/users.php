@@ -1,7 +1,7 @@
 <?php
 
-require_once 'actions.php';
-require_once 'files.php';
+require_once '../utilities/actions.php';
+require_once '../utilities/files.php';
 
 switch ($action)
 {
@@ -76,23 +76,22 @@ function user_exists($name)
 
 function update_user_svc($name)
 {
-	$target = user_path($name) . 'svc.php'
-	copy(template_file('svc.php'), $target);
+	copy(template_file('svc.php'), user_svc($name));
 }
 
 function create_user($name, $password)
 {
 	//Encrypt password
-	$passwordCrypt = password_hash($password);
+	$passwordCrypt = password_hash($password, PASSWORD_DEFAULT);
 	
 	//Create user and quips directory
 	// user/{name}
 	$userDir = user_path($name);
-	mkdir($userDir);
+	@mkdir($userDir);
 	
 	// user/{name}/q
 	$quipsDir = user_quips_path($name);
-	mkdir($quipsDir);
+	@mkdir($quipsDir);
 	
 	//Copy master svc node
 	update_user_svc($name);

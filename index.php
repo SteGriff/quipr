@@ -11,7 +11,21 @@
 	
 	<h1>Welcome</h1>
 
-	<p class="message"></p>
+	<p class="message">
+		<?php
+			session_start();
+			if (isset($_SESSION['userID']))
+			{
+				header('Location: p/home.php');
+			}
+			elseif (isset($_SESSION['home-message']))
+			{
+				echo $_SESSION['home-message'];
+				unset($_SESSION['home-message']);
+			}
+		?>
+	</p>
+	
 	
 	<p>Login/Register</p>
 	<form class="login-form" action="#">
@@ -36,11 +50,17 @@
 	function submit(e, action){
 		e.preventDefault();
 		
+		console.log("submit");
+		
+		
 		data = $('form.login-form').serialize();
 		data += "&a=" + action;
 		
+		console.log(data);
+		
 		$.post("controller/users.php", data)
 			.done(function(x){
+				alert(x);
 				if (action == LOGIN)
 				{
 					window.location = 'p/home.php';
@@ -60,6 +80,8 @@
 			
 	$(function(){
 
+		console.log("Ready!");
+		
 		$('button.login').click(function(e){
 			submit(e, LOGIN);
 		});

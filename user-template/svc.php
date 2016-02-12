@@ -1,6 +1,6 @@
 <?php
 
-require_once '../files.php';
+require_once '../utilities/files.php';
 require_once 'data.php';
 
 function authenticate($password)

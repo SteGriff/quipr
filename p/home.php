@@ -1,3 +1,11 @@
+<?php
+	session_start();
+	if (empty($_SESSION['userID']))
+	{
+		$_SESSION['home-message'] = 'Please log in';
+		header('Location: ../index.php');
+	}
+?>
 <!DOCTYPE HTML>
 <html>
 <head>
