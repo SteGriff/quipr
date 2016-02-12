@@ -1,6 +1,7 @@
 <?php
 
 require_once 'actions.php';
+require_once 'files.php';
 
 switch ($action)
 {
@@ -8,6 +9,12 @@ switch ($action)
 		$name = from_post('name');
 		$pass = from_post('pass');
 		register($name, $pass);
+		break;
+	
+	case 'login':
+		$name = from_post('name');
+		$pass = from_post('pass');
+		login($name, $pass);
 		break;
 	
 	default:
@@ -21,18 +28,43 @@ function register($name, $pass)
 {
 	if (user_exists($name))
 	{
-		return "Name taken";
+		http_fatal_400('Name taken');
 	}
 	else
 	{
-		create_user($name, $pass);
+		//Just using name as uid for now
+		$uid = create_user($name, $pass);
+		http_201('user', $uid);
 	}
 	
 }
 
-function user_path($name)
+function login($name, $password)
 {
-	return "users/$name";
+	$id = dal_player_authenticate_and_get_id($name, $password);
+	if ($id === false)
+	{
+		echo "Fail";
+		http_fatal_400('Wrong username or password');
+	}
+	else
+	{
+		session_start();
+		$_SESSION['userID'] = $id;
+		echo $id;
+		http_200($id);
+	}
+}
+
+function user_authenticate($name, $password)
+{
+	$passwordCrypt = crypt($password);
+	
+	//Get user data
+	$userSvc = user_path($name) . '/svc.php';
+	
+	
+	
 }
 
 function user_exists($name)
@@ -42,7 +74,31 @@ function user_exists($name)
 
 function create_user($name, $password)
 {
+	//Encrypt password
+	$passwordCrypt = crypt($password);
+	
+	//Create user and quips directory
+	// user/{name}
 	$userDir = user_path($name);
 	mkdir($userDir);
-	copy('master.php', "$userDir/svc.php");
+	
+	// user/{name}/q
+	$quipsDir = user_quips_path($name);
+	mkdir($quipsDir);
+	
+	//Get master svc content 
+	$userContent = file_get_contents('master.php');
+	
+	//Replace keys with data
+	$userContent = str_replace('{{USER_NAME}}', $name, $userContent);
+	$userContent = str_replace('{{USER_PASSWORD}}', $passwordCrypt, $userContent);
+	$userContent = str_replace('{{USER_DIR}}', $userDir, $userContent);
+	$userContent = str_replace('{{QUIPS_DIR}}', $quipsDir, $userContent);
+	
+	//Write the user svc file
+	file_put_contents("$userDir/svc.php", $userContent);
+		
+	//Use name as uid for now
+	// Later lets generate cool base 64 ids
+	return $name;
 }

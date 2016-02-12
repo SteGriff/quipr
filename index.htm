@@ -8,10 +8,68 @@
 </style>
 </head>
 <body>
+	
+	<h1>Welcome</h1>
+
+	<p class="message"></p>
+	
+	<p>Login/Register</p>
+	<form class="login-form" action="#">
+		<label>Name <input class="login name" type="text" name="name" placeholder="username"></label>
+		<label>Password <input class="login password" type="password" name="pass" placeholder="password"></label>
+		<button class="login">Login</button>
+		<button class="register">Register</button>
+	</form>
 
 <script src="script/jq.js"></script>
 <script>
+	
+	data = null;
+	LOGIN = "login";
+	REGISTER = "register";
+	
+	function feedback(message)
+	{
+		$('.message').text(message);
+	}
+	
+	function submit(e, action){
+		e.preventDefault();
+		
+		data = $('form.login-form').serialize();
+		data += "&a=" + action;
+		
+		$.post("user_service.php", data)
+			.done(function(x){
+				if (action == LOGIN)
+				{
+					window.location = 'p/home.htm';
+				}
+				else
+				{
+					feedback("Account created! Logging you in now, please wait...");
+					//Registration successful; log in automatically
+					submit(new Event(null), LOGIN);
+				}
+			})
+			.fail(function(x)
+			{
+				feedback(x.statusText);
+			});
+	}
+			
+	$(function(){
 
+		$('button.login').click(function(e){
+			submit(e, LOGIN);
+		});
+		
+		$('button.register').click(function(e){
+			submit(e, REGISTER);
+		});
+		
+	});
+	
 </script>
 </body>
 </html>
