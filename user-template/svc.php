@@ -1,11 +1,7 @@
 <?php
 
 require_once '../files.php';
-
-$username = "{{USER_NAME}}";
-$password = "{{USER_PASSWORD}}";
-$userDir = "{{USER_DIR}}";
-$quipsDir = "{{QUIPS_DIR}}";
+require_once 'data.php';
 
 function get_quips()
 {

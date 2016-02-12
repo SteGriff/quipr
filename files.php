@@ -1,5 +1,10 @@
 <?php
 
+function template_file($filename)
+{
+	return "user-template/$filename";
+}
+
 function user_path($name)
 {
 	return "users/$name";

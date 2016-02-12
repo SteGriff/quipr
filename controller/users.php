@@ -72,6 +72,12 @@ function user_exists($name)
 	return is_dir(user_path($name));
 }
 
+function update_user_svc($name)
+{
+	$target = user_path($name) . 'svc.php'
+	copy(template_file('svc.php'), $target);
+}
+
 function create_user($name, $password)
 {
 	//Encrypt password
@@ -86,8 +92,11 @@ function create_user($name, $password)
 	$quipsDir = user_quips_path($name);
 	mkdir($quipsDir);
 	
-	//Get master svc content 
-	$userContent = file_get_contents('master.php');
+	//Copy master svc node
+	update_user_svc($name);
+	
+	//Get master data content 
+	$userContent = file_get_contents(template_file('data.php'));
 	
 	//Replace keys with data
 	$userContent = str_replace('{{USER_NAME}}', $name, $userContent);
@@ -96,7 +105,7 @@ function create_user($name, $password)
 	$userContent = str_replace('{{QUIPS_DIR}}', $quipsDir, $userContent);
 	
 	//Write the user svc file
-	file_put_contents("$userDir/svc.php", $userContent);
+	file_put_contents("$userDir/data.php", $userContent);
 		
 	//Use name as uid for now
 	// Later lets generate cool base 64 ids

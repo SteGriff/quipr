@@ -21,7 +21,7 @@
 		<button class="register">Register</button>
 	</form>
 
-<script src="script/jq.js"></script>
+<script src="p/script/jq.js"></script>
 <script>
 	
 	data = null;
@@ -39,11 +39,11 @@
 		data = $('form.login-form').serialize();
 		data += "&a=" + action;
 		
-		$.post("user_service.php", data)
+		$.post("controller/users.php", data)
 			.done(function(x){
 				if (action == LOGIN)
 				{
-					window.location = 'p/home.htm';
+					window.location = 'p/home.php';
 				}
 				else
 				{
