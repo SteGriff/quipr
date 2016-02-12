@@ -3,6 +3,12 @@
 require_once '../files.php';
 require_once 'data.php';
 
+function authenticate($password)
+{
+	
+	password_verify();
+}
+
 function get_quips()
 {
 	
@@ -10,6 +16,8 @@ function get_quips()
 
 function post_quip($content)
 {
+	//Check logged in via session
+	
 	//Sanitize content?
 	
 	//Write metadata

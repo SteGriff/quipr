@@ -41,30 +41,32 @@ function register($name, $pass)
 
 function login($name, $password)
 {
-	$id = dal_player_authenticate_and_get_id($name, $password);
-	if ($id === false)
+	if (user_authenticate($name, $password))
 	{
-		echo "Fail";
-		http_fatal_400('Wrong username or password');
+		//TODO generate access token
+		session_start();
+		$_SESSION['userID'] = $name;
+		echo $name;
+		http_200($name);
 	}
 	else
 	{
-		session_start();
-		$_SESSION['userID'] = $id;
-		echo $id;
-		http_200($id);
+		$error = 'Wrong username or password';
+		echo $error;
+		http_fatal_400($error);
 	}
 }
 
 function user_authenticate($name, $password)
 {
-	$passwordCrypt = crypt($password);
-	
 	//Get user data
-	$userSvc = user_path($name) . '/svc.php';
+	$userDataFile = user_data($name);
 	
+	//Maybe this will suck
+	include_once $userDataFile;
 	
-	
+	$success = password_verify($password, $pcrypt);
+	return $success;
 }
 
 function user_exists($name)
@@ -81,7 +83,7 @@ function update_user_svc($name)
 function create_user($name, $password)
 {
 	//Encrypt password
-	$passwordCrypt = crypt($password);
+	$passwordCrypt = password_hash($password);
 	
 	//Create user and quips directory
 	// user/{name}
