@@ -16,6 +16,11 @@ switch ($action)
 		$pass = from_post('pass');
 		login($name, $pass);
 		break;
+		
+	case 'update':
+		update_users();
+		echo "Done!";
+		break;
 	
 	default:
 		if ($action !== null)
@@ -46,6 +51,7 @@ function login($name, $password)
 		//TODO generate access token
 		session_start();
 		$_SESSION['userID'] = $name;
+		$_SESSION['username'] = $name;
 		echo $name;
 		http_200($name);
 	}
@@ -84,12 +90,12 @@ function create_user($name, $password)
 	//Encrypt password
 	$passwordCrypt = password_hash($password, PASSWORD_DEFAULT);
 	
-	//Create user and quips directory
+	//Create user and quips directory (suppress warnings with @)
 	// user/{name}
 	$userDir = user_path($name);
 	@mkdir($userDir);
 	
-	// user/{name}/q
+	// user/{name}/q 
 	$quipsDir = user_quips_path($name);
 	@mkdir($quipsDir);
 	
@@ -102,13 +108,17 @@ function create_user($name, $password)
 	//Replace keys with data
 	$userContent = str_replace('{{USER_NAME}}', $name, $userContent);
 	$userContent = str_replace('{{USER_PASSWORD}}', $passwordCrypt, $userContent);
-	$userContent = str_replace('{{USER_DIR}}', $userDir, $userContent);
-	$userContent = str_replace('{{QUIPS_DIR}}', $quipsDir, $userContent);
-	
+
 	//Write the user svc file
 	file_put_contents("$userDir/data.php", $userContent);
 		
 	//Use name as uid for now
 	// Later lets generate cool base 64 ids
 	return $name;
+}
+
+function update_users()
+{
+	//TODO get all users using glob();
+	update_user_svc('ste');
 }

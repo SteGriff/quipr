@@ -5,6 +5,11 @@
 		$_SESSION['home-message'] = 'Please log in';
 		header('Location: ../index.php');
 	}
+	
+	require_once '../utilities/files.php';
+	
+	$username = $_SESSION['username'];
+	$userSvc = user_svc($username, true);
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -23,16 +28,22 @@
 	
 	<form class="post-form">
 		<p>What's up?</p>
-		<textarea class="post fix-width"></textarea>
+		<textarea name="qc" class="post fix-width"></textarea>
 		<button class="clickable post-button">Post</button>
 	</form>
 
 	<p>Stream:</p>
+	<div class="stream">
+	</div>
 	
-
+	<p>My quips:</p>
+	<div class="my-quips">
+	</div>
+	
 <script src="script/jq.js"></script>
 <script>
 	
+	url = "<?=$userSvc?>";
 	data = null;
 	POST = "post";
 
@@ -46,8 +57,8 @@
 		
 		data = $('form.post-form').serialize();
 		data += "&a=" + action;
-		
-		$.post("user_service.php", data)
+				
+		$.post(url, data)
 			.done(function(x){
 				feedback("Posted!");
 			})

@@ -50,17 +50,15 @@
 	function submit(e, action){
 		e.preventDefault();
 		
-		console.log("submit");
-		
+		//console.log("submit");
 		
 		data = $('form.login-form').serialize();
 		data += "&a=" + action;
 		
-		console.log(data);
+		//console.log(data);
 		
 		$.post("controller/users.php", data)
 			.done(function(x){
-				alert(x);
 				if (action == LOGIN)
 				{
 					window.location = 'p/home.php';

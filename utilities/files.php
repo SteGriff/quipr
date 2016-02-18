@@ -1,34 +1,41 @@
 <?php
 
-/*
-root of the application
-should have a closing slash /
-*/
-const ROOT = '/updog/';
+require_once 'config.php';
 
-
-function template_file($filename)
+function root($isJs)
 {
-	return ROOT . "user-template/$filename";
+	return $isJs
+		? APP_ROOT
+		: ROOT;
 }
 
-function user_path($name)
+/*
+	Base
+*/
+function template_file($filename, $isJs = false)
 {
-	return ROOT . "users/$name";
+	return root($isJs) . USER_STUB . $filename;
+}
+
+function user_path($name, $isJs = false)
+{
+	return root($isJs) . USERS . $name;
+}
+
+/*
+	Consumers of user_path
+*/
+function user_svc($name, $isJs = false)
+{
+	return user_path($name, $isJs) . '/svc.php';
 }
 
 function user_data($name)
 {
-	return ROOT . user_path($name) . '/data.php';
+	return user_path($name) . '/data.php';
 }
-
-function user_svc($name)
-{
-	return ROOT . user_path($name) . '/svc.php';
-}
-
 
 function user_quips_path($name)
 {
-	return ROOT . "users/$name/q";
+	return user_path($name) . '/q';
 }
