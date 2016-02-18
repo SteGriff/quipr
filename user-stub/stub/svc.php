@@ -40,51 +40,62 @@ function get_quips()
 	
 	//For now, open all quips files and add to array
 	$quipFiles = all_quip_files();
+	sort($quipFiles);
+	
 	$quipsData = [];
 	foreach($quipFiles as $q)
 	{
 		//Open quip file and separate metadata from quip
-		$qc = file_get_contents($q);
-		$qd = parse_quip_content($qc);
+		$dataJson = file_get_contents($q);
+		
+		$data = parse_quip_content($dataJson);
 		
 		//Add this quip data onto the array, using metadata as a key
-		$quipsData[$qd[0]] = $qd[1];
+		$quipsData[$data->date] = $data->quip;
 	}
 	
 	//Return the array of quip strings
 	return $quipsData;
 }
 
-function parse_quip_content($qc)
+function parse_quip_content($dataJson)
 {
-	//First line is metadata
-	// split content ONCE ONLY, on newline
-	$lines = split(NEWLINE, $qc, 1);
+	return json_decode($dataJson);
+}
+
+function write_quip_file($content)
+{
+	global $username; 
 	
-	return [ $lines[0], $lines[1] ];
+	$date = date("o-m-d\TH:i:s\Z");
+	
+	//Build file data JSON
+	$data = [
+		'date' => $date,
+		'quip' => $content
+	];
+	
+	$dataJson = json_encode($data);
+	
+	//Write to new quip file
+	$quipsDir = user_quips_path($username);
+	$quipFile = "$quipsDir/" . next_quip_file();
+	file_put_contents($quipFile, $dataJson);
 }
 
 function post_quip($content)
 {
-	global $username; 
-	
 	//Check logged in via session
 	session_start();
 	
 	//Sanitize content?
 	
-	//Write metadata
-	// just date for now
-	$metadataLine = date("o-m-d\TH:i:s\Z");
-	
-	$content = "$metadataLine\r\n$content";
-	
-	//Write to new quip file
-	$quipsDir = user_quips_path($username);
-	$quipFile = "$quipsDir/" . next_quip_file();
-	file_put_contents($quipFile, $content);
+	//Write file
+	write_quip_file($content);
 	
 }
+
+
 
 function next_quip_file()
 {
@@ -98,8 +109,10 @@ function quip_count()
 
 function all_quip_files()
 {
-	$expr = './*' . QUIP_EXT;
+	global $username;
+	
+	$expr = user_quips_path($username) . '/*' . QUIP_EXT;
 	$quips = glob($expr);
-	var_dump($quips);
+	
 	return $quips;
 }
