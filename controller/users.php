@@ -80,9 +80,11 @@ function user_exists($name)
 	return is_dir(user_path($name));
 }
 
-function update_user_svc($name)
+function update_user_files($name)
 {
 	copy(template_file('svc.php'), user_svc($name));
+	copy(template_file('index.php'), user_index($name));
+	copy(template_file('quips-view.php'), user_path($name) . '/quips-view.php');
 }
 
 function create_user($name, $password)
@@ -99,8 +101,12 @@ function create_user($name, $password)
 	$quipsDir = user_quips_path($name);
 	@mkdir($quipsDir);
 	
+	// user/{name}/fing and fers
+	mkdir(user_following_path($name));
+	mkdir(user_followers_path($name));
+	
 	//Copy master svc node
-	update_user_svc($name);
+	update_user_files($name);
 	
 	//Get master data content 
 	$userContent = file_get_contents(template_file('data.php'));
@@ -119,6 +125,19 @@ function create_user($name, $password)
 
 function update_users()
 {
-	//TODO get all users using glob();
-	update_user_svc('ste');
+	$expr = user_path() . '*';
+	$users = glob($expr);
+	
+	$ct = 0;
+	
+	foreach($users as $u)
+	{
+		$u = basename($u);
+		update_user_files($u);
+		
+		$ct += 1;
+	}
+	
+	echo "Processed $ct users.\r\n";
+	
 }

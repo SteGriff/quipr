@@ -15,6 +15,11 @@ switch ($action)
 		$quips = get_quips();
 		echo json_encode($quips);
 		break;
+		
+	case 'follow':
+		//The logged-in user follows this person
+		follow();
+		break;
 	
 	default:
 		if ($action !== null)
@@ -95,8 +100,6 @@ function post_quip($content)
 	
 }
 
-
-
 function next_quip_file()
 {
 	return quip_count() + 1 . QUIP_EXT;
@@ -115,4 +118,37 @@ function all_quip_files()
 	$quips = glob($expr);
 	
 	return $quips;
+}
+
+/* Following */
+
+function follow()
+{
+	//The username of this person
+	global $username;
+	
+	$target = $username;
+	
+	//Check we are authentic
+	session_start();
+	$follower = $_SESSION['username'];
+	echo $follower;
+	
+	// Get the new follower's fing path
+	// '/user/ste/fing'
+	$fingPath = user_following_path($follower);
+	echo $fingPath;
+	
+	// Make a name for the new symlink there
+	// '/user/ste/fing/jim' (LN)
+	$newLink = "$fingPath/$target";
+	echo $newLink;
+	
+	$linkTo = user_path($target);
+	echo $linkTo;
+	
+	//Create a link from '/user/ste/fing/jim' to '/user/jim' (the target)
+	symlink($linkTo, $newLink);
+	
+	echo "Done";
 }

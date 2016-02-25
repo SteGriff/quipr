@@ -22,6 +22,8 @@
 </head>
 <body>
 	
+	<?php include 'bits/topbar.php'; ?>
+	
 	<h1>Home</h1>
 
 	<p class="message"></p>
