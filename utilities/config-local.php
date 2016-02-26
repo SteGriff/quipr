@@ -26,6 +26,3 @@ const USERS = 'user/';
 //const QUIP_EXT = '.txt';
 const QUIP_EXT = '.txt';
 const NEWLINE = "\n";
-
-const QUIPS_FLAG = 'quips.flag';
-const QUIPS_CACHE = 'quips-cache.php';

@@ -6,6 +6,7 @@
 <style>
 
 </style>
+<script src="p/script/jq.js"></script>
 </head>
 <body>
 	
@@ -23,6 +24,10 @@
 				echo $_SESSION['home-message'];
 				unset($_SESSION['home-message']);
 			}
+			elseif (isset($_GET['logout']))
+			{
+				echo "You were succcessfully logged out.";
+			}
 		?>
 	</p>
 	
@@ -35,7 +40,6 @@
 		<button class="register">Register</button>
 	</form>
 
-<script src="p/script/jq.js"></script>
 <script>
 	
 	data = null;

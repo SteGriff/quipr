@@ -9,6 +9,7 @@
 	require_once '../utilities/files.php';
 	
 	$username = $_SESSION['username'];
+	$userPath = user_path($username, true);
 	$userSvc = user_svc($username, true);
 ?>
 <!DOCTYPE HTML>
@@ -19,6 +20,7 @@
 <style>
 
 </style>
+<script src="script/jq.js"></script>
 </head>
 <body>
 	
@@ -37,15 +39,11 @@
 	<p>Stream:</p>
 	<div class="stream">
 	</div>
-	
-	<p>My quips:</p>
-	<div class="my-quips">
-	</div>
-	
-<script src="script/jq.js"></script>
+
 <script>
 	
-	url = "<?=$userSvc?>";
+	userPath = "<?=$userPath?>";
+	userSvc = "<?=$userSvc?>";
 	data = null;
 	POST = "post";
 
@@ -60,7 +58,7 @@
 		data = $('form.post-form').serialize();
 		data += "&a=" + action;
 				
-		$.post(url, data)
+		$.post(userSvc, data)
 			.done(function(x){
 				feedback("Posted!");
 			})
@@ -75,6 +73,8 @@
 		$('button.post-button').click(function(e){
 			submit(e, POST);
 		});
+		
+		$('.stream').load(userPath + "/feed-view.php");
 		
 	});
 	

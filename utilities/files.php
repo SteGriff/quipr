@@ -55,3 +55,12 @@ function user_followers_path($name)
 	return user_path($name) . '/fers';
 }
 
+function user_quips_flag($name)
+{
+	return user_path($name) . '/' . QUIPS_FLAG;
+}
+
+function user_quips_cache($name)
+{
+	return user_path($name) . '/' . QUIPS_CACHE;
+}

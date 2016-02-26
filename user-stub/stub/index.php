@@ -1,14 +1,16 @@
 <?php
 	require_once 'data.php';
+	require_once '../../utilities/files.php';
 ?>
 <!DOCTYPE HTML>
 <html>
 <head>
-<title><?=$username?></title>
+<title><?=$username?> on quipr</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <style>
 
 </style>
+<script src="../../p/script/jq.js"></script>
 </head>
 <body>
 	
@@ -24,7 +26,6 @@
 	Loading...
 	</div>
 	
-<script src="../../p/script/jq.js"></script>
 <script>
 		
 	function feedback(message)

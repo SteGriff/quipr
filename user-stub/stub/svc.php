@@ -28,39 +28,86 @@ switch ($action)
 		}
 }
 
-function authenticate($password)
-{
-	
-	password_verify();
-}
-
 function get_quips()
 {
-	//TODO optimize me
-	
+	global $username;
+
 	//When a quip is posted, mark the directory as dirty
 	// if the directory is dirty, rebuild a PHP object file cache
-	// like the grammar in Parika.me.uk
+	// like the grammar in Paprika.me.uk
 	// Then return the PHP object cache
 	
-	//For now, open all quips files and add to array
-	$quipFiles = all_quip_files();
-	sort($quipFiles);
+	$cacheLocation = user_quips_cache($username);
+	$quipCache = [];
 	
-	$quipsData = [];
-	foreach($quipFiles as $q)
+	if (quips_are_dirty())
 	{
-		//Open quip file and separate metadata from quip
-		$dataJson = file_get_contents($q);
+		//Build the cache
+			
+		//Open all quip files and add to array
+		$quipFiles = all_quip_files();
+		sort($quipFiles);
 		
-		$data = parse_quip_content($dataJson);
+		foreach($quipFiles as $q)
+		{
+			//Open quip file and separate metadata from quip
+			$dataJson = file_get_contents($q);
+			
+			$data = parse_quip_content($dataJson);
+			
+			//Add this quip data onto the array, using metadata as a key
+			$quipCache[$data->date] = $data->quip;
+		}
 		
-		//Add this quip data onto the array, using metadata as a key
-		$quipsData[$data->date] = $data->quip;
+		//Export the PHP object to cache file
+		$quipCacheString = '<?php $quipCache = ' . var_export($quipCache, true) . ' ?>';
+		
+		file_put_contents($cacheLocation, $quipCacheString);
+		
+		//Remove the dirty flag
+		flag_quips_cached();
+	}
+	else
+	{
+		//Load the cache file
+		$cacheLocation = user_quips_cache($username);
+		
+		//This will rewrite the value of $quipCache
+		include_once $cacheLocation;
 	}
 	
-	//Return the array of quip strings
-	return $quipsData;
+	//Return the quip data
+	return $quipCache;
+}
+
+function get_feed()
+{
+	global $username;
+	
+	//Get all people we're following (they're symlinks)
+	$expr = user_following_path($username) . '/*';
+	$following = glob($expr);
+	
+	$feed = [];
+	
+	//Ask each user for their quips
+	foreach($following as $friend)
+	{
+		$friend = "$friend/" . QUIPS_CACHE;
+		echo "$friend \r\n";
+		
+		//Import their $quipCache
+		include_once $friend;
+		
+		foreach($quipCache as $k => $v)
+		{
+			$feed[$k] = $v;
+		}
+		
+	}
+	
+	var_dump($feed);
+	return $feed;
 }
 
 function parse_quip_content($dataJson)
@@ -68,7 +115,7 @@ function parse_quip_content($dataJson)
 	return json_decode($dataJson);
 }
 
-function write_quip_file($content)
+function post_quip($content)
 {
 	global $username; 
 	
@@ -86,18 +133,8 @@ function write_quip_file($content)
 	$quipsDir = user_quips_path($username);
 	$quipFile = "$quipsDir/" . next_quip_file();
 	file_put_contents($quipFile, $dataJson);
-}
-
-function post_quip($content)
-{
-	//Check logged in via session
-	session_start();
 	
-	//Sanitize content?
-	
-	//Write file
-	write_quip_file($content);
-	
+	flag_quips_dirty();
 }
 
 function next_quip_file()
@@ -118,6 +155,33 @@ function all_quip_files()
 	$quips = glob($expr);
 	
 	return $quips;
+}
+
+/* Quip caching and dirty state tracking */
+
+function flag_quips_dirty()
+{
+	global $username;
+	$flag = user_quips_flag($username);
+	
+	//Create flag file
+	touch($flag);
+}
+
+function flag_quips_cached()
+{
+	global $username;
+	$flag = user_quips_flag($username);
+	
+	//Delete flag file
+	unlink($flag);
+}
+
+function quips_are_dirty()
+{
+	global $username;
+	$flag = user_quips_flag($username);
+	return file_exists($flag);
 }
 
 /* Following */

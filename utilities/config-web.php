@@ -4,7 +4,7 @@
 	Root of the application
 	should have a closing slash /
 */
-const ROOT = 'C:/Users/Ste/OneDrive/Documents/Web/host/quipr/';
+const ROOT = '/www/host/quipr/';
 
 /*
 	The last bit of the above
@@ -26,6 +26,3 @@ const USERS = 'user/';
 //const QUIP_EXT = '.txt';
 const QUIP_EXT = '.txt';
 const NEWLINE = "\n";
-
-const QUIPS_FLAG = 'quips.flag';
-const QUIPS_CACHE = 'quips-cache.php';
