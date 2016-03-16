@@ -34,7 +34,6 @@ function get_quips()
 
 	//When a quip is posted, mark the directory as dirty
 	// if the directory is dirty, rebuild a PHP object file cache
-	// like the grammar in Paprika.me.uk
 	// Then return the PHP object cache
 	
 	$cacheLocation = user_quips_cache($username);
@@ -68,10 +67,7 @@ function get_quips()
 		flag_quips_cached();
 	}
 	else
-	{
-		//Load the cache file
-		$cacheLocation = user_quips_cache($username);
-		
+	{		
 		//This will rewrite the value of $quipCache
 		include_once $cacheLocation;
 	}
@@ -87,26 +83,28 @@ function get_feed()
 	//Get all people we're following (they're symlinks)
 	$expr = user_following_path($username) . '/*';
 	$following = glob($expr);
-	
+		
 	$feed = [];
 	
 	//Ask each user for their quips
 	foreach($following as $friend)
 	{
-		$friend = "$friend/" . QUIPS_CACHE;
-		echo "$friend \r\n";
+		$friendsQuipCache = "$friend/" . QUIPS_CACHE;
 		
 		//Import their $quipCache
-		include_once $friend;
+		include_once $friendsQuipCache;
 		
 		foreach($quipCache as $k => $v)
 		{
-			$feed[$k] = $v;
+			$feed[$k] = [
+				'date' => $k,
+				'quip' => $v,
+				'name' => trim(basename($friend))
+			];
 		}
 		
 	}
 	
-	var_dump($feed);
 	return $feed;
 }
 

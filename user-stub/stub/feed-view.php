@@ -5,12 +5,17 @@ $quips = get_feed();
 
 ?>
 
-<?php foreach($quips as $k => $q): ?>
+<?php foreach($quips as $k => $vals): ?>
 
 	<div class="quip">
-		<time><?=date_format(date_create($k), "d m o, H:i")?></time>
+		<div role="author" class="author">
+			<?=$vals['name']?>
+		</div>
+		<time>
+			<?=date_format(date_create($k), "H:i d/m/o")?>
+		</time>
 		<div class="quip-content">
-			<?=$q?>
+			<?=$vals['quip']?>
 		</div>
 	</div>
 	
