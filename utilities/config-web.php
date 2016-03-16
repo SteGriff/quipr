@@ -4,13 +4,13 @@
 	Root of the application
 	should have a closing slash /
 */
-const ROOT = '/www/host/quipr/';
+const ROOT = '/home/stegriffks/www/host/quipr/';
 
 /*
 	The last bit of the above
 	with closing slash /
 */
-const APP_ROOT = '/quipr/';
+const APP_ROOT = '/host/quipr/';
 
 /*
 	Relative directories

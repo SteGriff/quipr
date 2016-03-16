@@ -27,17 +27,17 @@ function user_path($name = '', $isJs = false)
 */
 function user_svc($name, $isJs = false)
 {
-	return user_path($name, $isJs) . '/svc.php';
+	return user_path($name, $isJs) . SVC;
 }
 
 function user_data($name)
 {
-	return user_path($name) . '/data.php';
+	return user_path($name) . DATA;
 }
 
 function user_index($name, $isJs = false)
 {
-	return user_path($name, $isJs) . '/index.php';
+	return user_path($name, $isJs) . INDEX;
 }
 
 function user_quips_path($name)

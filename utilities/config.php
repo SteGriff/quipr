@@ -18,6 +18,10 @@ const APP_ROOT = '/quipr/';
 const USER_STUB = 'user-stub/stub/';
 const USERS = 'user/';
 
+const SVC = '/svc.php';
+const DATA = '/data.php';
+const INDEX = '/index.php';
+
 /*
 	Parameters for quip storage
 */
